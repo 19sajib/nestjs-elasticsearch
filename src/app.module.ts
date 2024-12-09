@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { DatabaseService } from './database.service';
 import { ConfigModule } from '@nestjs/config';
 import { PostModule } from './post/post.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -23,10 +23,8 @@ import { PostModule } from './post/post.module';
       synchronize: true, // Remove in production
       logging: true
     }),
-    ElasticsearchModule.register({
-      node: process.env.ELASTICSEARCH_HOST,
-    }),
-    PostModule
+    PostModule,
+    SearchModule
   ],
   controllers: [AppController],
   providers: [AppService, DatabaseService],

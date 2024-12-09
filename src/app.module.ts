@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { DatabaseService } from './database.service';
 import { ConfigModule } from '@nestjs/config';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ConfigModule } from '@nestjs/config';
     ElasticsearchModule.register({
       node: process.env.ELASTICSEARCH_HOST,
     }),
+    PostModule
   ],
   controllers: [AppController],
   providers: [AppService, DatabaseService],

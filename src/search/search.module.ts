@@ -10,8 +10,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         node: configService.get('ELASTICSEARCH_HOST'),
-        maxRetries: 10,
-        requestTimeout: 60000,
+        auth: {
+          username: configService.get('ELASTICSEARCH_USER'),
+          password: configService.get('ELASTICSEARCH_PASSWORD'),
+        },
+        maxRetries: 7,
+        requestTimeout: 30000,
+        pingTimeout: 30000,
+        sniffOnStart: true,
+        log: 'trace'
       }),
       inject: [ConfigService],
     }),

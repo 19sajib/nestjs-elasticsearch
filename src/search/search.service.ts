@@ -77,4 +77,35 @@ export class SearchService implements OnModuleInit {
       }
     }
 
+    // creating document index
+    async indexPost(post: any, id: string) {
+      return await this.elasticsearchService.index({
+        index: this.configService.get('ELASTICSEARCH_INDEX_NAME'),
+        id,
+        body: post
+      })
+    }
+
+    // deleting document by id
+    async deletePostById(id: string) {
+      await this.elasticsearchService.delete({
+        index: this.configService.get('ELASTICSEARCH_INDEX_NAME'),
+        id
+      })
+    }
+
+    // deleting document using query
+    async deleteByQuery(id: string) {
+      await this.elasticsearchService.deleteByQuery({
+        index: this.configService.get('ELASTICSEARCH_INDEX_NAME'),
+        body: {
+          query: {
+            match: {
+              id
+            }
+          }
+        }
+      })
+    }
+
 }

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { SearchService } from './search.service';
-import { ElasticsearchModule } from '@nestjs/elasticsearch';
+import { ElasticsearchModule, ElasticsearchService } from '@nestjs/elasticsearch';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
@@ -23,6 +23,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
     }),
   ],
-  providers: [SearchService]
+  providers: [SearchService],
+  exports: [SearchService]
 })
 export class SearchModule {}

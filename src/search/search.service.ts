@@ -120,20 +120,71 @@ export class SearchService implements OnModuleInit {
   }
 
   // creating document index
-  async indexPost(post: any, id: string) {
+  async indexPost(post: any, id : number) {
     return await this.elasticsearchService.index({
       index: this.configService.get('ELASTICSEARCH_INDEX_NAME'),
-      id,
+      id: id.toString(),
       body: post,
     });
   }
 
-  // searching document
+  // searching document by post title
+  async findPosts(search: string) {
+    console.log(search,"ssssssssssssssss")
+    let results = [];
+        const body = await this.elasticsearchService.search({
+            index: this.configService.get('ELASTICSEARCH_INDEX_NAME'),
+            body: {
+                size: 12,
+                query: {
+                    match: {
+                        // 'title.complete': {
+                        //     query: search,
+                        // },
+                        title: search
+                    },
+                },
+            },
+        });
+        const hits = body.hits.hits;
+        hits.map(item => {
+            results.push(item._source);
+        });
+
+        return { results, total: body.hits.total };
+  }
+
+  // searching document by post Id
   async searchPostById(postId: string) {
     return await this.elasticsearchService.get({
       index: this.configService.get('ELASTICSEARCH_INDEX_NAME'),
       id: postId,
     });
+  }
+
+  // searching all document
+  async searchAllPost() {
+    let posts = []
+    const body = await this.elasticsearchService.search({
+      index: this.configService.get('ELASTICSEARCH_INDEX_NAME')
+    });
+    const hits = body.hits.hits;
+        hits.map(item => {
+            posts.push(item._source);
+        });
+
+    return { posts, total: body };
+  }
+
+  // updating doc
+  async updatePostById(id: string, body: any) {
+    await this.elasticsearchService.update({
+      index: this.configService.get('ELASTICSEARCH_INDEX_NAME'),
+      id,
+      body: {
+        doc: body
+      }
+    })
   }
 
   // deleting document by id
@@ -145,16 +196,20 @@ export class SearchService implements OnModuleInit {
   }
 
   // deleting document using query
-  async deleteByQuery(id: string) {
+  async deleteSingleDoc(id: string) {
+    await this.elasticsearchService.delete({
+      index: this.configService.get('ELASTICSEARCH_INDEX_NAME'),
+      id
+    });
+  }
+
+  // deleting all doc
+  async deleteAllDoc() {
     await this.elasticsearchService.deleteByQuery({
       index: this.configService.get('ELASTICSEARCH_INDEX_NAME'),
-      body: {
-        query: {
-          match: {
-            id,
-          },
-        },
-      },
-    });
+      query: {
+        match_all: {}
+      }
+    })
   }
 }

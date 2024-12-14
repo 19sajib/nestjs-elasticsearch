@@ -39,27 +39,23 @@ export class SearchService implements OnModuleInit {
             properties: {
               title: {
                 type: 'text',
+                analyzer: 'autocomplete_index_analyzer', // Use custom analyzer for indexing
+                search_analyzer: 'autocomplete_search_analyzer', // Use custom analyzer for querying
               },
               description: {
                 type: 'text',
+                analyzer: 'autocomplete_index_analyzer',
+                search_analyzer: 'autocomplete_search_analyzer',  
               },
               post_by: {
                 type: 'text',
-                fields: {
-                  keyword: {
-                    type: 'keyword',
-                    ignore_above: 30,
-                  },
-                },
+                analyzer: 'autocomplete_index_analyzer',
+                search_analyzer: 'autocomplete_search_analyzer',
               },
               tag: {
                 type: 'text',
-                fields: {
-                  keyword: {
-                    type: 'keyword',
-                    ignore_above: 20,
-                  },
-                },
+                analyzer: 'autocomplete_index_analyzer',
+                search_analyzer: 'autocomplete_search_analyzer',
               },
               contact: {
                 type: 'keyword',
@@ -89,14 +85,6 @@ export class SearchService implements OnModuleInit {
                   min_gram: 1, // Minimum token length
                   max_gram: 30, // Maximum token length
                   token_chars: ['letter', 'digit', 'whitespace'], // Includes letters, digits, and spaces
-                },
-              },
-              filter: {
-                // Optional: Define an edge_ngram filter for advanced configurations
-                autocomplete_filter: {
-                  type: 'edge_ngram',
-                  min_gram: 1,
-                  max_gram: 30,
                 },
               },
             },
@@ -130,17 +118,12 @@ export class SearchService implements OnModuleInit {
 
   // searching document by post title
   async findPosts(search: string) {
-    console.log(search,"ssssssssssssssss")
     let results = [];
         const body = await this.elasticsearchService.search({
             index: this.configService.get('ELASTICSEARCH_INDEX_NAME'),
             body: {
-                size: 12,
                 query: {
                     match: {
-                        // 'title.complete': {
-                        //     query: search,
-                        // },
                         title: search
                     },
                 },

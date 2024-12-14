@@ -8,6 +8,7 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
 
+  // search by title
   @Get('/posts')
     async getMovies(@Query('search') search: string) {
         if (search !== undefined && search.length > 1) {

@@ -50,7 +50,6 @@ export class PostService {
   }
 
   async findPosts(search: string): Promise<any> {
-    console.log(search, "hereeeeeeeeeeeeee")
     return await this.searchService.findPosts(search)
   }
 }
